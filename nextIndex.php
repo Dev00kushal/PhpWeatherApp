@@ -1,4 +1,5 @@
 <?php
+header('Content-Type: application/json');
 $city_name = "KNOWSLEY"; // Set the city name
 
 // Function to fetch weather data from API
@@ -154,21 +155,11 @@ function display_data($servername, $username, $password, $dbname)
   $result = $conn->query($sql);
 
   if ($result->num_rows > 0) {
-    echo '<div class="week-grid">'; // Assuming you have a CSS class "week-grid" for styling
-
+    $all_data = array();
     while ($row = $result->fetch_assoc()) {
-        echo '<div class="week-box">';
-        echo '<div class="week-content">';
-        echo '<p>' .$row["Week_Day"]. '</p>';
-        echo '<figure><img src="./images/' . $row["Weather_Icon"] . '.png" alt="weather-icon" /></figure>';
-        echo '<p>' . $row["Temperature"] . '°C</p>';
-        echo '<p>' . $row["Pressure"] . ' Pa</p>';
-        echo '<p>' . $row["Wind_Speed"] . ' m/s</p>';
-        echo '<p>' . $row["Humidity"] . ' %</p>';
-        echo '</div>';
-        echo '</div>';
+      array_push($all_data,$row);
     }
-    echo '</div>';
+    return  json_encode($all_data);
   } else {
     echo "0 results";
   }
@@ -194,50 +185,7 @@ function connect_DB()
   insert_update_data($servername, $username, $password, $dbname);
 
   // Display weather data
-  display_data($servername, $username, $password, $dbname);
+  return display_data($servername, $username, $password, $dbname);
 }
+echo connect_DB();
 ?>
-  
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Weather App</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="kushal_chaulgain_ 2358432.css">
-</head>
-<body>
-<div class="wrapper">
-  <div class="container">
-    <div class="search-container">
-      <input
-        type="text"
-        placeholder="Enter a city name"
-        id="city"
-        value="Knowsley"
-      />
-      <button id="search-btn">Search</button>
-    </div>
-    <div id="result"></div>
-  </div>
-
-  <section class="right">
-    <h1>
-      <?php echo $city_name . " Weather Data"; ?>
-    </h1>
-    <div class="content">
-      <div class="week-box">
-      <div class="week-container">
-        <?php connect_DB(); ?>
-      </div>
-    </div>
-
-    </div>
-    </section>
-</div>
-<script src="kushal_chaulgain_ 2358432.js" defer></script>
-</body>
-</html>
